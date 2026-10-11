@@ -1,0 +1,907 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuizMaster - Quiz Website</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #eef2ff, #fce7f3);
+      color: #1f2937;
+    }
+
+    header {
+      background: #4f46e5;
+      color: white;
+      padding: 18px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 9px;
+      padding: 12px 18px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      opacity: 0.88;
+      transform: translateY(-1px);
+    }
+
+    nav button {
+      background: white;
+      color: #4f46e5;
+    }
+
+    main {
+      max-width: 850px;
+      margin: 35px auto;
+      padding: 0 18px;
+      min-height: 65vh;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.09);
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      color: #4f46e5;
+      margin-bottom: 15px;
+      font-size: 30px;
+    }
+
+    h2 {
+      margin-bottom: 18px;
+    }
+
+    p {
+      line-height: 1.7;
+      margin-bottom: 15px;
+    }
+
+    .auth-card {
+      max-width: 460px;
+      margin: 25px auto;
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin: 14px 0;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      font-size: 16px;
+    }
+
+    input:focus {
+      outline: 2px solid #a5b4fc;
+      border-color: #6366f1;
+    }
+
+    .primary {
+      background: #4f46e5;
+      color: white;
+    }
+
+    .secondary {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+
+    .danger {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .full-width {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .link-button {
+      background: none;
+      color: #4f46e5;
+      padding: 5px;
+      text-decoration: underline;
+    }
+
+    .message {
+      min-height: 24px;
+      margin-top: 12px;
+      color: #b91c1c;
+      overflow-wrap: anywhere;
+    }
+
+    .success {
+      color: #15803d;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 25px 0;
+    }
+
+    .stat {
+      background: #eef2ff;
+      text-align: center;
+      padding: 18px 8px;
+      border-radius: 12px;
+    }
+
+    .stat strong {
+      display: block;
+      color: #4f46e5;
+      font-size: 25px;
+      margin-bottom: 5px;
+    }
+
+    .question-number {
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+
+    .progress {
+      height: 9px;
+      background: #e5e7eb;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 18px 0 25px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: #4f46e5;
+      transition: width 0.2s;
+    }
+
+    .option {
+      display: block;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 12px 0;
+      cursor: pointer;
+    }
+
+    .option:hover {
+      background: #eef2ff;
+    }
+
+    .option.selected {
+      border: 2px solid #4f46e5;
+      background: #eef2ff;
+    }
+
+    .option input {
+      display: inline-block;
+      width: auto;
+      margin: 0 10px 0 0;
+    }
+
+    .quiz-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    .score {
+      font-size: 48px;
+      color: #4f46e5;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .history-item {
+      padding: 15px;
+      border-bottom: 1px solid #e5e7eb;
+      overflow-wrap: anywhere;
+    }
+
+    .empty {
+      color: #6b7280;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 22px;
+      color: #6b7280;
+    }
+
+    @media (max-width: 520px) {
+      header {
+        padding: 16px;
+      }
+
+      main {
+        margin: 20px auto;
+      }
+
+      .card {
+        padding: 22px 17px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      .stats {
+        gap: 7px;
+      }
+
+      .stat {
+        font-size: 13px;
+      }
+
+      .stat strong {
+        font-size: 21px;
+      }
+
+      nav button {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">QuizMaster</div>
+
+  <nav id="mainNav" style="display: none;">
+    <button onclick="showHome()">Home</button>
+    <button onclick="showHistory()">Previous Scores</button>
+    <button onclick="logout()">Logout</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- LOGIN / SIGNUP PAGE -->
+  <section id="auth" class="page active">
+    <div class="card auth-card">
+      <h1 id="authTitle">Welcome to QuizMaster!</h1>
+      <p id="authDescription">Login to continue to your quiz.</p>
+
+      <form id="authForm" onsubmit="submitAuth(event)">
+        <div id="nameField" style="display: none;">
+          <input
+            id="userName"
+            type="text"
+            placeholder="Enter your name"
+            autocomplete="name"
+          >
+        </div>
+
+        <input
+          id="userEmail"
+          type="email"
+          placeholder="Enter your email"
+          autocomplete="email"
+          required
+        >
+
+        <input
+          id="userPassword"
+          type="password"
+          placeholder="Enter a demo password"
+          autocomplete="current-password"
+          required
+        >
+
+        <button id="authSubmit" class="primary full-width" type="submit">
+          Login
+        </button>
+      </form>
+
+      <p id="authError" class="message" role="status"></p>
+
+      <p id="switchText" style="text-align: center;">
+        Don't have an account?
+        <button class="link-button" onclick="setAuthMode('signup')">
+          Sign Up
+        </button>
+      </p>
+
+      <p style="font-size: 12px; color: #6b7280;">
+        Demo login only. Do not use a real password or sensitive information.
+      </p>
+    </div>
+  </section>
+
+  <!-- HOME PAGE -->
+  <section id="home" class="page">
+    <div class="card">
+      <h1>Test Your Knowledge!</h1>
+      <p>Welcome, <strong id="welcomeName">Student</strong>!</p>
+      <p>
+        Answer multiple-choice questions, check your results,
+        and track your learning progress.
+      </p>
+
+      <div class="stats">
+        <div class="stat">
+          <strong>10</strong>
+          Questions
+        </div>
+
+        <div class="stat">
+          <strong id="attemptCount">0</strong>
+          Attempts
+        </div>
+
+        <div class="stat">
+          <strong id="bestScore">0/10</strong>
+          Best Score
+        </div>
+      </div>
+
+      <button class="primary full-width" onclick="startQuiz()">
+        Start Quiz
+      </button>
+
+      <button class="secondary full-width" onclick="showHistory()">
+        View Previous Scores
+      </button>
+    </div>
+  </section>
+
+  <!-- QUIZ PAGE -->
+  <section id="quiz" class="page">
+    <div class="card">
+      <h2>Quiz Time!</h2>
+
+      <p id="questionNumber" class="question-number">
+        Question 1 of 10
+      </p>
+
+      <div class="progress">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+
+      <h2 id="questionText"></h2>
+
+      <div id="options"></div>
+
+      <p id="quizMessage" class="message" role="status"></p>
+
+      <div class="quiz-actions">
+        <button class="secondary" onclick="showHome()">Exit Quiz</button>
+        <button id="nextButton" class="primary" onclick="nextQuestion()">
+          Next Question
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULT PAGE -->
+  <section id="result" class="page">
+    <div class="card" style="text-align: center;">
+      <h1>Quiz Completed!</h1>
+      <p id="resultMessage">Here is your result.</p>
+
+      <div class="score" id="finalScore">0/10</div>
+
+      <p id="percentage">0%</p>
+
+      <button class="primary full-width" onclick="startQuiz()">
+        Try Again
+      </button>
+
+      <button class="secondary full-width" onclick="showHistory()">
+        View Previous Scores
+      </button>
+
+      <button class="secondary full-width" onclick="showHome()">
+        Back to Home
+      </button>
+    </div>
+  </section>
+
+  <!-- PREVIOUS SCORES PAGE -->
+  <section id="history" class="page">
+    <div class="card">
+      <h1>Previous Scores</h1>
+      <p>Your quiz attempts are shown below.</p>
+
+      <div id="historyList"></div>
+
+      <button class="secondary full-width" onclick="showHome()">
+        Back to Home
+      </button>
+
+      <button class="danger full-width" onclick="clearHistory()">
+        Clear My Scores
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2026 QuizMaster | Learn, Practice, Improve!</p>
+</footer>
+
+<script>
+  // QUIZ QUESTIONS
+  const questions = [
+    {
+      question: "Which language is used to structure web pages?",
+      options: ["HTML", "CSS", "SQL", "Python"],
+      answer: 0
+    },
+    {
+      question: "Which language is mainly used to style web pages?",
+      options: ["Java", "CSS", "C", "SQL"],
+      answer: 1
+    },
+    {
+      question: "Which company developed Java?",
+      options: ["Microsoft", "Apple", "Sun Microsystems", "Google"],
+      answer: 2
+    },
+    {
+      question: "What does CPU stand for?",
+      options: [
+        "Central Processing Unit",
+        "Computer Personal Unit",
+        "Central Program Utility",
+        "Control Processing User"
+      ],
+      answer: 0
+    },
+    {
+      question: "Which data structure follows FIFO?",
+      options: ["Stack", "Tree", "Queue", "Graph"],
+      answer: 2
+    },
+    {
+      question: "Which symbol is commonly used for a single-line comment in Java?",
+      options: ["##", "//", "<!--", "**"],
+      answer: 1
+    },
+    {
+      question: "Which one is a database management system?",
+      options: ["MySQL", "HTML", "CSS", "Windows Explorer"],
+      answer: 0
+    },
+    {
+      question: "What does URL stand for?",
+      options: [
+        "Universal Record Link",
+        "Uniform Resource Locator",
+        "United Resource Language",
+        "Universal Reference Location"
+      ],
+      answer: 1
+    },
+    {
+      question: "Which HTML tag creates a hyperlink?",
+      options: ["<p>", "<h1>", "<a>", "<img>"],
+      answer: 2
+    },
+    {
+      question: "Which of these is an operating system?",
+      options: ["Linux", "JavaScript", "MySQL", "HTML"],
+      answer: 0
+    }
+  ];
+
+  let currentUser = null;
+  let authMode = "login";
+  let currentQuestion = 0;
+  let score = 0;
+  let selectedAnswer = null;
+
+  // SHOW ONLY ONE PAGE AT A TIME
+  function showPage(pageId) {
+    document.querySelectorAll(".page").forEach(function(page) {
+      page.classList.remove("active");
+    });
+
+    document.getElementById(pageId).classList.add("active");
+  }
+
+  // LOGIN / SIGNUP
+  function setAuthMode(mode) {
+    authMode = mode;
+
+    document.getElementById("authError").textContent = "";
+
+    const isSignup = mode === "signup";
+
+    document.getElementById("authTitle").textContent =
+      isSignup ? "Create Your Account" : "Welcome to QuizMaster!";
+
+    document.getElementById("authDescription").textContent =
+      isSignup
+        ? "Create a demo account to start your quiz."
+        : "Login to continue to your quiz.";
+
+    document.getElementById("nameField").style.display =
+      isSignup ? "block" : "none";
+
+    document.getElementById("userName").required = isSignup;
+
+    document.getElementById("authSubmit").textContent =
+      isSignup ? "Sign Up" : "Login";
+
+    document.getElementById("userPassword").autocomplete =
+      isSignup ? "new-password" : "current-password";
+
+    document.getElementById("switchText").innerHTML = isSignup
+      ? 'Already have an account? <button class="link-button" onclick="setAuthMode(\'login\')">Login</button>'
+      : 'Don\'t have an account? <button class="link-button" onclick="setAuthMode(\'signup\')">Sign Up</button>';
+  }
+
+  function getUsers() {
+    try {
+      return JSON.parse(localStorage.getItem("quizDemoUsers") || "[]");
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function submitAuth(event) {
+    event.preventDefault();
+
+    const name = document.getElementById("userName").value.trim();
+    const email = document.getElementById("userEmail").value.trim().toLowerCase();
+    const password = document.getElementById("userPassword").value;
+    const errorElement = document.getElementById("authError");
+
+    errorElement.textContent = "";
+
+    if (!email || !password) {
+      errorElement.textContent = "Please fill in all required fields.";
+      return;
+    }
+
+    const users = getUsers();
+
+    if (authMode === "signup") {
+      if (!name) {
+        errorElement.textContent = "Please enter your name.";
+        return;
+      }
+
+      if (password.length < 4) {
+        errorElement.textContent = "Demo password must be at least 4 characters.";
+        return;
+      }
+
+      const existingUser = users.find(function(user) {
+        return user.email === email;
+      });
+
+      if (existingUser) {
+        errorElement.textContent = "Account already exists. Please login.";
+        return;
+      }
+
+      users.push({
+        name: name,
+        email: email,
+        password: password
+      });
+
+      try {
+        localStorage.setItem("quizDemoUsers", JSON.stringify(users));
+      } catch (storageError) {
+        errorElement.textContent = "Could not save account in this browser.";
+        return;
+      }
+
+      loginUser({ name: name, email: email });
+      return;
+    }
+
+    const user = users.find(function(item) {
+      return item.email === email && item.password === password;
+    });
+
+    if (!user) {
+      errorElement.textContent =
+        "Incorrect email or password. Please check or sign up.";
+      return;
+    }
+
+    loginUser(user);
+  }
+
+  function loginUser(user) {
+    currentUser = {
+      name: user.name,
+      email: user.email
+    };
+
+    document.getElementById("mainNav").style.display = "flex";
+    document.getElementById("welcomeName").textContent = currentUser.name;
+
+    document.getElementById("userPassword").value = "";
+    document.getElementById("authError").textContent = "";
+
+    updateDashboard();
+    showHome();
+  }
+
+  function logout() {
+    currentUser = null;
+
+    document.getElementById("mainNav").style.display = "none";
+    document.getElementById("authForm").reset();
+
+    setAuthMode("login");
+    showPage("auth");
+  }
+
+  // USER-SPECIFIC SCORE HISTORY
+  function historyKey() {
+    return "quizHistory_" + currentUser.email;
+  }
+
+  function getHistory() {
+    if (!currentUser) return [];
+
+    try {
+      return JSON.parse(localStorage.getItem(historyKey()) || "[]");
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function saveHistory(history) {
+    localStorage.setItem(historyKey(), JSON.stringify(history));
+  }
+
+  function updateDashboard() {
+    if (!currentUser) return;
+
+    const history = getHistory();
+
+    document.getElementById("attemptCount").textContent = history.length;
+
+    const bestScore = history.length
+      ? Math.max(...history.map(function(item) {
+          return item.score;
+        }))
+      : 0;
+
+    document.getElementById("bestScore").textContent =
+      bestScore + "/" + questions.length;
+  }
+
+  function showHome() {
+    if (!currentUser) {
+      showPage("auth");
+      return;
+    }
+
+    updateDashboard();
+    showPage("home");
+  }
+
+  // QUIZ LOGIC
+  function startQuiz() {
+    if (!currentUser) {
+      showPage("auth");
+      return;
+    }
+
+    currentQuestion = 0;
+    score = 0;
+    selectedAnswer = null;
+
+    showPage("quiz");
+    displayQuestion();
+  }
+
+  function displayQuestion() {
+    const question = questions[currentQuestion];
+
+    selectedAnswer = null;
+
+    document.getElementById("questionNumber").textContent =
+      "Question " + (currentQuestion + 1) + " of " + questions.length;
+
+    document.getElementById("questionText").textContent = question.question;
+
+    document.getElementById("progressBar").style.width =
+      ((currentQuestion + 1) / questions.length * 100) + "%";
+
+    document.getElementById("quizMessage").textContent = "";
+
+    const optionsContainer = document.getElementById("options");
+    optionsContainer.innerHTML = "";
+
+    question.options.forEach(function(option, index) {
+      const label = document.createElement("label");
+      label.className = "option";
+
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "answer";
+      radio.value = index;
+
+      radio.addEventListener("change", function() {
+        selectedAnswer = index;
+
+        document.querySelectorAll(".option").forEach(function(item) {
+          item.classList.remove("selected");
+        });
+
+        label.classList.add("selected");
+      });
+
+      label.appendChild(radio);
+      label.appendChild(document.createTextNode(option));
+
+      optionsContainer.appendChild(label);
+    });
+
+    document.getElementById("nextButton").textContent =
+      currentQuestion === questions.length - 1
+        ? "Finish Quiz"
+        : "Next Question";
+  }
+
+  function nextQuestion() {
+    if (selectedAnswer === null) {
+      document.getElementById("quizMessage").textContent =
+        "Please select an answer before continuing.";
+      return;
+    }
+
+    if (selectedAnswer === questions[currentQuestion].answer) {
+      score++;
+    }
+
+    currentQuestion++;
+
+    if (currentQuestion < questions.length) {
+      displayQuestion();
+    } else {
+      finishQuiz();
+    }
+  }
+
+  function finishQuiz() {
+    const history = getHistory();
+
+    const attempt = {
+      score: score,
+      total: questions.length,
+      date: new Date().toLocaleString()
+    };
+
+    history.unshift(attempt);
+
+    try {
+      saveHistory(history);
+    } catch (error) {
+      alert("Your score could not be saved in this browser.");
+    }
+
+    document.getElementById("finalScore").textContent =
+      score + "/" + questions.length;
+
+    const percentage = Math.round(score / questions.length * 100);
+
+    document.getElementById("percentage").textContent =
+      "Percentage: " + percentage + "%";
+
+    document.getElementById("resultMessage").textContent =
+      percentage >= 80
+        ? "Excellent work! Keep it up!"
+        : percentage >= 50
+          ? "Good effort! Keep practising."
+          : "Keep learning and try again!";
+
+    updateDashboard();
+    showPage("result");
+  }
+
+  // PREVIOUS SCORES
+  function showHistory() {
+    if (!currentUser) {
+      showPage("auth");
+      return;
+    }
+
+    const history = getHistory();
+    const historyList = document.getElementById("historyList");
+
+    historyList.innerHTML = "";
+
+    if (history.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "empty";
+      empty.textContent = "No previous attempts yet. Start your first quiz!";
+      historyList.appendChild(empty);
+    } else {
+      history.forEach(function(item, index) {
+        const row = document.createElement("div");
+        row.className = "history-item";
+
+        const title = document.createElement("strong");
+        title.textContent = "Attempt " + (index + 1) +
+          ": " + item.score + "/" + item.total;
+
+        const date = document.createElement("p");
+        date.textContent = item.date;
+
+        row.appendChild(title);
+        row.appendChild(date);
+        historyList.appendChild(row);
+      });
+    }
+
+    showPage("history");
+  }
+
+  function clearHistory() {
+    if (!currentUser) return;
+
+    if (confirm("Are you sure you want to clear your previous scores?")) {
+      saveHistory([]);
+      updateDashboard();
+      showHistory();
+    }
+  }
+
+  // ALWAYS SHOW LOGIN WHEN THE WEBSITE IS OPENED
+  // The user must log in again after refreshing the page.
+  document.getElementById("mainNav").style.display = "none";
+  setAuthMode("login");
+  showPage("auth");
+</script>
+
+</body>
+</html>
